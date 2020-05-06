@@ -1,0 +1,15 @@
+{
+  "host": "HOST",
+  "port": "PORT",
+  "authentication": {
+    "accessSecret": "ACCESS_SECRET",
+    "refreshSecret": "REFRESH_SECRET"
+  },
+  "db": {
+    "uri": "DB_URI",
+    "options": {
+      "user": "DB_USER",
+      "pass": "DB_PASS"
+    }
+  }
+}
