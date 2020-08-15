@@ -7,33 +7,14 @@
     "max": 50
   },
   "authentication": {
-    "localService": {
+    "authService": {
       "authStrategies": [
-        "jwt",
-        "local",
-        "refresh"
+        "local"
       ],
-      "jwt": {
-        "entities": [ "client" ],
-        "options": {
-          "header": {
-            "typ": "access"
-          },
-          "audience": "https://yourdomain.com",
-          "issuer": "feathers",
-          "algorithm": "HS256",
-          "expiresIn": "1d"
-        }
-      },
       "local": {
         "entities": [ "client" ],
         "usernameField": "user",
         "passwordField": "password"
-      },
-      "refresh": {
-        "entities": [ "client" ],
-        "accessTokenField": "accessToken",
-        "refreshTokenField": "refreshToken"
       }
     },
     "jwtVerification": {

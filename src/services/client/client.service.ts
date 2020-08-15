@@ -12,11 +12,11 @@ import createTransactionService from './transaction/transaction.service';
 class ClientService extends MongooseService {
   
   constructor(
-    app: AloeVera, 
+    app: AloeVera,
     baseURI: string, 
     options: any
   ) {
-    super(app, baseURI, options)   
+    super(app, baseURI, options)
   }
 
   async create(data: any) {
@@ -32,7 +32,7 @@ class ClientService extends MongooseService {
 
 const mCreateClient = function () {
   return asyncMiddleware(async (req: Request, _res: Response, next: NextFunction) => {
-     
+
     const result = await (req.ref.service as ClientService).create(req.data.body)
 
     req.ref.result = result
@@ -50,7 +50,7 @@ const mGetClient = function () {
     req.ref.result = result
     req.ref.success = true
 
-    next()  
+    next()
   });
 } 
 

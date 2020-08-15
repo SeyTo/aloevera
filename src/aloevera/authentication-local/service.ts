@@ -1,23 +1,30 @@
 import RouterService, {RouterServiceOptions} from "../commons/router.service";
 import DataService from "../commons/data.service";
-import {createStrategy} from "../authentication/strategy";
+import AuthenticationStrategy, {createStrategy} from "../authentication/strategy";
 import JwtStrategy from "../authentication-jwt/strategy";
 import LocalStrategy from "./strategy";
 import RefreshStrategy from "../authentication-refresh/strategy";
+import {NextFunction} from "express";
 
+const debug = require('debug')('aloe:AuthService')
+
+// TODO move this class to something more intuitive place
 export default class AuthService extends RouterService {
 
   // data service from which entities will be retreived
-  strategies: object // of AuthenticationStrategy
+  strategies: Map<string, AuthenticationStrategy> // of AuthenticationStrategy
 
+  /**
+   * AuthService.strategies is created on construction.
+   */
   constructor(
-    app: AloeVera, 
-    baseURI: string, 
+    app: AloeVera,
+    baseURI: string,
     options: LocalServiceOptions
   ) {
     super(app, baseURI, options)
 
-    if (!options.name || options.name === '') {
+    if (!options.name) {
       throw new Error('options.name is required. It should point to configuration name in authentication.')
     }
 
@@ -25,14 +32,17 @@ export default class AuthService extends RouterService {
   }
 
   private configure(authConfig: any) {
+    debug('configuring AuthService')
+
     if (!authConfig['authStrategies']) {
       throw new Error('"authStrategies" should be defined in config.')
     }
 
     // define all auth strategies
-    this.strategies = []
+    this.strategies = new Map()
     authConfig['authStrategies'].forEach((name: string) => {
-      this.strategies[name] = createStrategy(name, this.app, authConfig, this.options)
+      debug('creating strategy for ' + name)
+      this.strategies.set(name, createStrategy(name, this.app, authConfig, <LocalServiceOptions>this.options))
     })
 
   }
@@ -40,27 +50,24 @@ export default class AuthService extends RouterService {
   /**
    * @param { keys: [depends on type], type: [jwt, local] } keys depends on 'type'.
    */
-  async authenticate(body: { params: any, type: 'jwt' | 'local' | 'refresh' }) {
-    // TODO 
-    switch (body.type) {
+  async authenticate(req: Request, res: Response, next: NextFunction): Promise<any> {
+    const type = req.body['type']
+    debug(`calling ${type} strategy.`)
+    switch (type) {
       case 'jwt':
-        (<JwtStrategy>this.strategies['jwt']).authenticate()
-        break
+        return (<JwtStrategy>this.strategies.get('jwt')).authenticate(req)
       case 'local':
-        (<LocalStrategy>this.strategies['local']).authenticate()
-        break
+        return (<LocalStrategy>this.strategies.get('local')).authenticate(req)
       case 'refresh':
-        <RefreshStrategy>this.strategies['refresh'].authenticate()
-        break
-
+        return (<RefreshStrategy>this.strategies.get('refresh')).authenticate(req)
+      default:
+        throw "Unknown type of strategy defined";
     }
-    return await this.strategy.authenticate(body)
-
-
   }
 }
 
 interface LocalServiceOptions extends RouterServiceOptions {
   name: string
-  dataService: DataService
+  dataServices?: Map<string, DataService>,
+  dataService?: DataService
 }

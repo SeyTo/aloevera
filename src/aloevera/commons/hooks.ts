@@ -1,7 +1,11 @@
 export default class HooksGroup {
-  before: HookFun[] 
+  before: HookFun[]
   after: HookFun[] 
 
+  /**
+   * @param before Function[] (req, res, next) type of function.
+   * @param after Function[] (req, res, next) type of function.
+   */
   constructor(before = [], after = []) {
     this.before = before
     this.after = after

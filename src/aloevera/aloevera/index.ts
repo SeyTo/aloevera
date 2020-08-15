@@ -16,6 +16,7 @@ declare global {
   interface Request extends express.Request {
     ref: Ref
     data: DataRef
+    status?: Number
   }
 }
 
@@ -30,7 +31,7 @@ export default function (): AloeVera {
   expressApp.services = []
 
 
-  expressApp.useService = function (service: RouteService) {
+  expressApp.useService = function (service: RouterService) {
     debug('registering a service')
 
     service.init(expressApp)

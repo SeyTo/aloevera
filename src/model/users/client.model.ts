@@ -1,4 +1,4 @@
-import { Mongoose } from "mongoose"
+import { Mongoose, Document, Model } from "mongoose"
 
 const modelName: string = 'client'
 const collection: string = 'clients'
@@ -29,13 +29,16 @@ export function createModel (app: AloeVera) {
   return mongooseClient.model(modelName, schema);
 }
 
-export function getModel(app: AloeVera): any | void {
+/**
+ * Get/Create the mongoose Model for client.
+ */
+export function getModel(app: AloeVera): Model<Document> {
   const mongooseClient = app.get('mongooseClient')
-  
+
   if (mongooseClient.modelNames().includes(modelName)) {
-    return mongooseClient.model(modelName)
+    return mongooseClient.model(modelName) as Model<Document>
   } else {
-    return createModel(app)    
+    return createModel(app)
   }
 
 }

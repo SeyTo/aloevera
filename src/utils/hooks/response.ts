@@ -15,3 +15,11 @@ export function mSuccessData (req: Request, res: Response, _next: NextFunction) 
     res.status(501).send('something went wrong')
   }
 }
+
+export function mResponse (req: Request, res: Response, _next: NextFunction) {
+  if (req.ref.success === true) {
+    res.status(req.ref.status || 200).send(req.ref.result)
+  } else {
+    res.status(req.ref.status || 501).send(req.ref.result || 'Something went wrong')
+  }
+}

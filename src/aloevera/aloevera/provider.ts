@@ -13,7 +13,8 @@ export default class Provider {
   ) {
     this.method = method
     this.middleware = middleware
-    this.hooksGroup = hooksGroup
+    if (!hooksGroup) this.hooksGroup = new HooksGroup()
+    else this.hooksGroup = hooksGroup
   }
 
   /**

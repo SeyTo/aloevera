@@ -37,8 +37,6 @@ export default class RouterService extends AdapterService {
     
     if (this.options.services && Array.isArray(this.options.services)) {
       for (let service of this.options.services) {
-        console.log('servie is')
-        console.log(service)
         if (service instanceof RouterService) {
           (service as RouterService).init(this.router)
         }
@@ -54,6 +52,7 @@ export default class RouterService extends AdapterService {
   }
 
   private initProviders() {
+    // extract and prepare hooks to be appended.
     let beforeHooks = []
     let afterHooks = [] 
     if (this.options.hooksGroup && Array.isArray(this.options.hooksGroup)) {
@@ -70,13 +69,17 @@ export default class RouterService extends AdapterService {
           if (!req.ref) req.ref = { service: null, success: false }
           if (!req.data) req.data = {}
 
+          // TODO filter data, to make it appropriate for use.
           // collect body, params and other stuffs
           if (req.body) req.data['body'] = req.body
-
-            // other primary keys
-            req.ref['providerName'] = provider.name
-            req.ref['service'] = this
-            next()
+          // TODO req.params?
+          if (req.query) req.data['query'] = req.query
+          if (req.headers) req.data['headers'] = req.headers
+          // other primary keys
+          // TODO is this neccessary? or req.method?
+          req.ref['method'] = provider.method
+          req.ref['service'] = this
+          next()
         }
 
         // constructing arguments
@@ -95,6 +98,11 @@ export default class RouterService extends AdapterService {
         )
 
       }
+    } else {
+      // for now throw errors when providers are not found, 
+      // as we understand that currently only RouterService can be registered 
+      // and it requires Providers to function.
+      throw new Error("Providers have not been assigned.")
     }
 
   }
@@ -105,7 +113,7 @@ export interface RouterServiceOptions {
   /**
    * Service without
    */
-  providers?: Provider[]
+  providers: Provider[]
   services?: AdapterService[]
   hooksGroup?: HooksGroup
 }

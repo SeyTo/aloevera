@@ -1,13 +1,12 @@
-import DataService from "../commons/data.service";
+import DataService from "../../aloevera/commons/data.service";
 
-const debug = require('debug')('aloe:MongooseDataService')
+const debug = require('debug')('aloe:ClientDataService')
 
-export default class MongooseDataService extends DataService {
+export default class ClientDataService extends DataService {
 
-  constructor(app: AloeVera, options?: MongooseDataServiceOptions) {
+  constructor(app: AloeVera, options?: ClientDataServiceOptions) {
     // TODO expand into another options class
     super(app, options)
-    debug('MongooseDataService constructed.')
   }
 
   async create(body: any) {
@@ -29,7 +28,7 @@ export default class MongooseDataService extends DataService {
 
 }
 
-export interface MongooseDataServiceOptions {
+export interface ClientDataServiceOptions {
   /**
    * Mongoose data model.
    */

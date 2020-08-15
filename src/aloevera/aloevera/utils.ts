@@ -1,4 +1,4 @@
-import {NextFunction} from "express"
+import { Request, Response, NextFunction } from "express"
 
 export function asyncMiddleware (fn: Function) {
   return (req: Request, res: Response, next: NextFunction) => {

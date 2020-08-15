@@ -9,7 +9,7 @@ export default class MongooseService extends RouterService {
   constructor(app: AloeVera, baseURI: string, options: any) {
     super(app, baseURI, options)
 
-    this.operations = new MongooseDataService({
+    this.operations = new MongooseDataService(app, {
       model: options.model
     })
   }
